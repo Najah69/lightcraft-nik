@@ -1,0 +1,9 @@
+# produits par install.ps1, propres à chaque machine
+NikPourLightCraft.exe
+launcher.cfg
+# Python
+__pycache__/
+*.pyc
+# journaux, sorties de tests
+*.log
+tests/*.exe
