@@ -25,9 +25,16 @@ before = pyw_cmdlines()
 lc.run("library.select", {"ids": [pid], "active": pid})
 r = lc.run("photo.editInExternal")  # sans `app` : l'« autre éditeur » réglé, donc notre lanceur
 print("copie rendue par LightCraft :", r["path"])
-time.sleep(4)
-new = {k: v for k, v in pyw_cmdlines().items() if k not in before and "NikPourLightCraft" in v}
+new = {}
+for _ in range(10):  # LightCraft lance l'éditeur entre deux images : surveiller jusqu'à 10 s
+    time.sleep(1)
+    new = {k: v for k, v in pyw_cmdlines().items() if k not in before and "NikPourLightCraft" in v}
+    if new:
+        break
 print("sélecteur lancé :", bool(new))
+if not new:
+    ui = lc.request("ui.inspect") or {}
+    print("  diagnostic : toast =", ui.get("toast"), "| editor =", (lc.request("ui.set", {}) or {}).get("settings", {}).get("externalEditor"))
 for k, v in new.items():
     print("  ligne de commande :", v.split("NikPourLightCraft.pyw\"")[-1].strip())
     subprocess.run(["taskkill", "/PID", k, "/F"], capture_output=True)

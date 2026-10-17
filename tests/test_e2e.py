@@ -45,6 +45,12 @@ ids = imp["imported"]
 check("import des 3 photos de test", len(ids) == 3, imp)
 p1, p2, p3 = ids
 
+try:
+    core.edit("silver", "adjusted", list(range(1, core.MAX_EDIT + 2)), PORT)
+    check("plus de 50 photos : refus clair", False, "aucun refus")
+except core.NikError as e:
+    check("plus de 50 photos : refus clair", "%d au plus" % core.MAX_EDIT in str(e), e)
+
 r = core.edit("silver", "adjusted", [p1], PORT)
 copy1 = r["copies"][0]
 check("adjusted : copie TIFF rendue", copy1["path"].endswith("-Edit.tif") and os.path.exists(copy1["path"]), r)

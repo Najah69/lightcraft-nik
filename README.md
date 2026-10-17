@@ -120,8 +120,12 @@ photos sélectionnées dans Silver Efex avec les paramètres que j'ai copiés »
 
 ### 5.1 Modifier une photo dans une appli Nik (le cas le plus courant)
 
-1. Dans LightCraft, sélectionnez une ou plusieurs photos.
-2. Menu **Photo ▸ Edit In ▸ Edit in Other Editor**, ou **Ctrl+Alt+E**, ou clic droit ▸ *Edit In*.
+1. Dans LightCraft, sélectionnez une ou plusieurs photos (50 au plus : chacune s'ouvre dans sa propre fenêtre Nik).
+2. Menu **Photo ▸ Edit In ▸ Edit in Other Editor**, ou **Ctrl+Alt+E**, ou clic droit sur la photo ▸ **Edit In** ▸
+   **Edit in Other Editor**.
+
+> **LightCraft en français ?** Ces entrées restent en anglais (« Edit In », « Edit in Other Editor ») : la traduction
+> française de LightCraft 0.8 ne les couvre pas encore. Le reste du menu est en français.
 3. LightCraft prépare une copie de chaque photo **avec tous vos réglages** (exposition, recadrage, masques…), en TIFF
    16 bits, et la range **au-dessus de l'originale, dans une pile**.
 4. Une petite fenêtre demande **quelle appli Nik** utiliser. Cliquez par exemple sur *Silver Efex*. La dernière appli
@@ -189,9 +193,15 @@ palette : elle le règle. Ou tapez-y le chemin complet de `NikPourLightCraft.exe
 **« Aucune appli de la Nik Collection n'a été trouvée ».**
 La Nik Collection doit être installée dans `C:\Program Files\DxO\…` (emplacement par défaut).
 
+**« … photos sélectionnées : Modifier dans en ouvre 50 au plus à la fois ».**
+Vous avez sélectionné trop de photos (par exemple toute une séance avec Ctrl+A). Chaque photo ouvrirait sa propre
+fenêtre Nik : sélectionnez seulement celles à retoucher. Pour donner le même effet à tout un lot, retouchez-en une,
+puis utilisez **Copier les paramètres** et **Appliquer les paramètres à la sélection** (aucune limite de nombre). Au-delà
+de 10 photos, la palette demande confirmation avant d'ouvrir Nik.
+
 **J'ai enregistré dans Nik mais la photo n'a pas changé dans LightCraft.**
 Cliquez dans la fenêtre de LightCraft : il relit les fichiers modifiés quand il reprend la main. Sinon, clic droit
-sur la photo ▸ *Reload from Disk*. Vérifiez aussi que vous avez bien cliqué sur *Enregistrer* et pas *Enregistrer sous*
+sur la photo ▸ *Recharger depuis le disque* (*Reload from Disk* en anglais). Vérifiez aussi que vous avez bien cliqué sur *Enregistrer* et pas *Enregistrer sous*
 dans Nik.
 
 **« Copier les paramètres » répond que la photo ne contient pas de paramètres Nik.**
@@ -339,7 +349,8 @@ Identification de l'appli dans un fichier de paramètres (`plugin_from_params`) 
 
 ## 13. Déroulé détaillé de chaque fonction
 
-**`edit(app, mode, ids)`**
+**`edit(app, mode, ids)`** — refusé au-delà de `MAX_EDIT` = 50 photos, la limite de `photo.editExternal` (chaque photo
+lance un processus Nik) ; la palette demande confirmation au-delà de 10.
 - `adjusted` : `photo.editInExternal {ids, app: <exe Nik>, format: "tiff", colorSpace: "proPhoto", bitDepth: 16}`.
   LightCraft rend `<nom>-Edit.tif`, empile la copie et lance l'appli. Une surveillance est lancée en plus de son
   rechargement au retour du focus.

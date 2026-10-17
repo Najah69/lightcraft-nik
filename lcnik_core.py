@@ -52,6 +52,8 @@ RAW_EXT = {
 # Ce que Nik sait ouvrir tel quel (« Modifier l'original »).
 EDITABLE_EXT = {".tif", ".tiff", ".jpg", ".jpeg"}
 MODES = ("adjusted", "copy", "original")
+# Au plus 50 photos par « Modifier dans » : la limite de LightCraft (photo.editExternal), et chaque photo ouvre Nik.
+MAX_EDIT = 50
 NO_WINDOW = 0x08000000
 DETACHED = 0x00000008
 
@@ -366,6 +368,11 @@ def edit(app, mode="adjusted", ids=None, port=None):
     lc = LightCraft(port)
     try:
         targets = lc.targets(ids)
+        if len(targets) > MAX_EDIT:
+            raise NikError(
+                "%d photos sélectionnées : « Modifier dans » en ouvre %d au plus à la fois, chacune dans sa fenêtre Nik. "
+                "Sélectionnez moins de photos, ou utilisez « Appliquer les paramètres » pour traiter un lot."
+                % (len(targets), MAX_EDIT))
         if mode == "adjusted":
             # LightCraft rend la copie, l'empile, lance Nik et la recharge au retour dans sa fenêtre
             r = lc.run("photo.editInExternal", {"ids": targets, "app": a["exe"], "format": "tiff",

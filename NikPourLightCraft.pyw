@@ -77,6 +77,7 @@ class Palette:
         f = ttk.Frame(self.root, padding=12)
         f.pack(fill="both")
 
+        self.count = 0  # photos sélectionnées dans LightCraft, au dernier relevé
         self.state = ttk.Label(f, text="Connexion à LightCraft…", foreground="#666")
         self.state.grid(row=0, column=0, columnspan=2, sticky="w")
 
@@ -136,7 +137,8 @@ class Palette:
             try:
                 st = core.status()
                 lc = st["lightcraft"]
-                text = ("LightCraft connecté — %d photo(s) sélectionnée(s)" % len(lc["selection"])) if lc["connected"] \
+                self.count = len(lc.get("selection") or [])
+                text = ("LightCraft connecté — %d photo(s) sélectionnée(s)" % self.count) if lc["connected"] \
                     else "LightCraft non joignable (port %d) : ouvrez-le." % lc["port"]
             except Exception as e:
                 text = "État inconnu : %s" % e
@@ -181,6 +183,15 @@ class Palette:
     def do_edit(self):
         key = self._key()
         if not key:
+            return
+        if self.count > core.MAX_EDIT:
+            self.msg.config(text="%d photos sélectionnées : « Modifier » en ouvre %d au plus à la fois. Sélectionnez-en "
+                                 "moins, ou utilisez « Appliquer les paramètres » pour un lot." % (self.count, core.MAX_EDIT),
+                            foreground="#b42318")
+            return
+        if self.count > 10 and not messagebox.askyesno(
+                TITLE, "Ouvrir %d photos dans %s ?\nChacune s'ouvre dans sa propre fenêtre Nik." % (self.count, self.app.get()),
+                parent=self.root):
             return
         self.cfg.update(last_app=key, last_mode=self.mode.get())
         core.save_config(self.cfg)
