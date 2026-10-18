@@ -531,7 +531,8 @@ deux images, et une fenêtre qui ne se redessine plus pendant 5 s fait refuser l
 | Nik Collection 6 à 8 | ⏳ non testé (noms d'exécutables détectés par motif `Nik * <Appli>.exe`) |
 | Édition Google 2016 : installation, signatures, détection des 8 applis | ✅ vérifié sur Windows 11 |
 | Édition Google 2016 : application de réglages par script | ✅ vérifié **impossible** (commandes absentes) → fonction réservée à DxO |
-| Édition Google 2016 : ouverture d'une photo, enregistrement, HDR par `--config-file` | ⏳ à valider sur les vraies applis |
+| Édition Google 2016 : *Modifier dans* de bout en bout (rendu TIFF 16 bits ProPhoto recadré, empilement, ouverture dans Silver Efex Pro 2, enregistrement sur place, rechargement automatique dans LightCraft) | ✅ vérifié le 18/10/2026 sur une vraie photo de mariage (Nikon Z 8) |
+| Édition Google 2016 : HDR par `--config-file` | ⏳ à valider sur les vraies applis |
 
 Vos retours sur ces points sont les bienvenus : ouvrez une *issue* avec le journal `lcnik.log`.
 
