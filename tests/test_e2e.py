@@ -11,7 +11,18 @@ import lcnik_core as core  # noqa: E402
 PORT = 7981
 FAKE = os.path.join(T, "FakeNik.exe")
 core.PARAMS_DIR = os.path.join(T, "params")
-core.find_apps = lambda: {k: {"key": k, "name": n, "exe": FAKE, "suffix": s} for k, n, s, _ in core.APPS}
+
+
+def fake_dxo():
+    return {k: {"key": k, "name": n, "exe": FAKE, "suffix": s, "edition": "dxo", "family": k} for k, n, s, _ in core.APPS}
+
+
+def fake_google():
+    return {k + core.GOOGLE_SUFFIX: {"key": k + core.GOOGLE_SUFFIX, "name": core.GOOGLE_APPS[k][0] + " (2016)", "exe": FAKE,
+                                     "suffix": s, "edition": "google", "family": k} for k, n, s, _ in core.APPS}
+
+
+core.find_apps = fake_dxo
 ok = True
 
 
@@ -87,11 +98,29 @@ r = core.apply_params([p3], None, False, "adjusted", PORT)
 out = r["applied"][0]["path"] if r["applied"] else ""
 check("appliquer : résultat -sep.tif empilé", out.endswith("-sep.tif") and os.path.exists(out) and not r["errors"], r)
 
+# --- édition gratuite de Google (2016) seule
+core.find_apps = fake_google
+check("2016 : édition détectée seule", core.editions() == ["google"], core.editions())
+check("2016 : « silver » désigne Silver Efex Pro 2", core.app_for("silver")["name"] == "Silver Efex Pro 2 (2016)")
+r = core.edit("silver", "copy", [p1], PORT)
+check("2016 : Modifier dans fonctionne", r["files"] and r["app"] == "Silver Efex Pro 2 (2016)", r)
+r = core.hdr([p3, p1], "adjusted", PORT)
+check("2016 : HDR importé et empilé", r.get("imported"), r)
+for label, call in (("Copier", lambda: core.copy_params(p1, PORT)), ("Appliquer", lambda: core.apply_params([p1], port=PORT)),
+                    ("Reprendre", lambda: core.reedit(p1, PORT))):
+    try:
+        call()
+        check("2016 : %s refusé avec explication" % label, False, "aucun refus")
+    except core.NikError as e:
+        check("2016 : %s refusé avec explication" % label, "version gratuite" in str(e), e)
+core.find_apps = fake_dxo
+
 time.sleep(8)  # laisser les surveillances recharger
 log = open(os.path.join(T, "fakenik.log"), encoding="utf-8", errors="replace").read()
 print("--- appels reçus par le faux Nik :\n" + log)
 check("faux Nik : --paste --input --params --output", "--paste | --input |" in log and "| --params |" in log and "| --output |" in log)
-check("faux Nik : --host-lightroom <config>", "--host-lightroom | " in log)
+check("faux Nik : --host-lightroom <config> (DxO)", "--host-lightroom | " in log)
+check("faux Nik : --config-file <config> (2016)", "--config-file | " in log)
 check("rechargements journalisés", "rechargé" in open(core.LOG_FILE, encoding="utf-8").read())
 print("RÉSULTAT :", "tout est bon" if ok else "des échecs")
 lc.close()

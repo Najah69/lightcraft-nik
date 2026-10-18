@@ -83,7 +83,7 @@ class Palette:
 
         box = ttk.LabelFrame(f, text="Modifier dans", padding=8)
         box.grid(row=1, column=0, columnspan=2, sticky="ew", pady=(8, 4))
-        names = [a["name"] for a in self.apps.values() if a["key"] != "hdr"]
+        names = [a["name"] for a in self.apps.values() if a["family"] != "hdr"]
         self.app = tk.StringVar(value=self._name(self.cfg.get("last_app")) or (names[0] if names else ""))
         ttk.Combobox(box, textvariable=self.app, values=names, state="readonly", width=30).pack(anchor="w")
         self.mode = tk.StringVar(value=self.cfg.get("last_mode", "adjusted"))
@@ -95,15 +95,22 @@ class Palette:
 
         box = ttk.LabelFrame(f, text="Autres fonctions", padding=8)
         box.grid(row=2, column=0, columnspan=2, sticky="ew", pady=4)
+        has_hdr = any(a["family"] == "hdr" for a in self.apps.values())
         ttk.Button(box, text="Fusion HDR Efex…", width=34, command=self.do_hdr,
-                   state="normal" if "hdr" in self.apps else "disabled").pack(pady=2)
-        ttk.Button(box, text="Copier les paramètres de la photo active", width=34, command=self.do_copy).pack(pady=2)
+                   state="normal" if has_hdr else "disabled").pack(pady=2)
+        # Copier/Appliquer et Reprendre reposent sur les données non destructives de la Nik Collection de DxO
+        dxo = "normal" if "dxo" in core.editions() else "disabled"
+        ttk.Button(box, text="Copier les paramètres de la photo active", width=34, command=self.do_copy, state=dxo).pack(pady=2)
         self.show_ui = tk.BooleanVar(value=False)
-        ttk.Button(box, text="Appliquer les paramètres à la sélection", width=34, command=self.do_apply).pack(pady=2)
-        ttk.Checkbutton(box, text="Afficher Nik pour ajuster chaque photo", variable=self.show_ui).pack(anchor="w")
-        ttk.Button(box, text="Reprendre la retouche Nik", width=34, command=self.do_reedit).pack(pady=2)
+        ttk.Button(box, text="Appliquer les paramètres à la sélection", width=34, command=self.do_apply, state=dxo).pack(pady=2)
+        ttk.Checkbutton(box, text="Afficher Nik pour ajuster chaque photo", variable=self.show_ui, state=dxo).pack(anchor="w")
+        ttk.Button(box, text="Reprendre la retouche Nik", width=34, command=self.do_reedit, state=dxo).pack(pady=2)
         self.saved = ttk.Label(box, foreground="#666", wraplength=300)
         self.saved.pack(anchor="w", pady=(4, 0))
+        if dxo == "disabled":
+            ttk.Label(box, foreground="#666", wraplength=300,
+                      text="Ces trois fonctions demandent la Nik Collection de DxO (6 ou plus récente). La version "
+                           "gratuite de 2016 permet Modifier dans et HDR Efex.").pack(anchor="w", pady=(4, 0))
 
         self.top = tk.BooleanVar(value=bool(self.cfg.get("topmost", True)))
         ttk.Checkbutton(f, text="Toujours au premier plan", variable=self.top, command=self._topmost).grid(row=3, column=0, sticky="w")

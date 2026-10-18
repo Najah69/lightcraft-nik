@@ -6,8 +6,10 @@ reviennent toutes seules dans votre bibliothèque, empilées avec l'original.
 
 > **Projet indépendant.** Il n'est ni affilié ni approuvé par DxO Labs (éditeur de la Nik Collection) ni par
 > ArtCraft / storytold (éditeurs de LightCraft). « Nik Collection », « Silver Efex », etc. sont des marques de DxO.
-> Ce projet ne contient aucun code de DxO et ne modifie ni la Nik Collection ni LightCraft : il les fait communiquer.
-> Il vous faut une **Nik Collection officielle** (version d'essai ou licence achetée sur [dxo.com](https://www.dxo.com/fr/nik-collection/)).
+> Ce projet ne contient aucun code de DxO ni de Google et ne modifie ni la Nik Collection ni LightCraft : il les fait
+> communiquer. Il vous faut une **Nik Collection officielle** : la version actuelle de DxO (essai ou licence sur
+> [dxo.com](https://www.dxo.com/fr/nik-collection/)), **ou** la version gratuite publiée par Google en 2016
+> (voir [Quelle Nik Collection choisir ?](#3-bis-quelle-nik-collection-choisir-)).
 
 > **Statut : expérimental (version 1.0.0).** Tout le côté LightCraft est testé automatiquement. Les commandes
 > envoyées aux applis Nik reproduisent celles du module Lightroom de DxO, mais certaines n'ont pas encore été validées
@@ -21,7 +23,7 @@ reviennent toutes seules dans votre bibliothèque, empilées avec l'original.
 **Pour tout le monde**
 1. [De quoi s'agit-il ?](#1-de-quoi-sagit-il-)
 2. [Ce que vous pourrez faire](#2-ce-que-vous-pourrez-faire)
-3. [Ce qu'il vous faut](#3-ce-quil-vous-faut)
+3. [Ce qu'il vous faut](#3-ce-quil-vous-faut) — et [quelle Nik Collection choisir](#3-bis-quelle-nik-collection-choisir-)
 4. [Installation pas à pas](#4-installation-pas-à-pas)
 5. [Utilisation](#5-utilisation)
 6. [Où sont mes fichiers ?](#6-où-sont-mes-fichiers-)
@@ -83,12 +85,61 @@ photos sélectionnées dans Silver Efex avec les paramètres que j'ai copiés »
 |---|---|---|
 | **Windows 10 ou 11, 64 bits** | — | macOS et Linux ne sont pas pris en charge pour l'instant. |
 | **LightCraft** (version 0.8 ou plus récente) | [github.com/storytold/lightcraft/releases](https://github.com/storytold/lightcraft/releases), fichier `…-windows-x64.msi` | Installé à l'emplacement proposé (`C:\Program Files\LightCraft`). |
-| **Nik Collection de DxO** (conçu pour la version 9 ; 6 à 8 probablement compatibles, non testées) | [dxo.com](https://www.dxo.com/fr/nik-collection/) | Essai gratuit de 30 jours ou licence. Installée à l'emplacement proposé. |
+| **Nik Collection** : **ou bien** celle de DxO (conçu pour la 9 ; 6 à 8 probablement compatibles, non testées), **ou bien** la version gratuite de Google 1.2.11 (2016), ou les deux | voir [3 bis](#3-bis-quelle-nik-collection-choisir-) | Installée à l'emplacement proposé. |
 | **Python 3.10 ou plus récent** | [python.org/downloads](https://www.python.org/downloads/) | Gratuit. Voir l'encadré ci-dessous. |
 
 > **Installer Python correctement** : lancez l'installateur de python.org et, sur le premier écran, **cochez
 > « Add python.exe to PATH »** avant de cliquer sur *Install Now*. L'option « tcl/tk and IDLE » (cochée par défaut)
 > doit rester cochée : c'est elle qui permet d'afficher les fenêtres.
+
+## 3 bis. Quelle Nik Collection choisir ?
+
+Le projet fonctionne avec **deux éditions**, selon vos moyens. Les deux peuvent être installées ensemble : elles
+apparaissent alors toutes les deux dans la liste, la version 2016 avec « (2016) » dans son nom.
+
+| | **Nik Collection de DxO** (version actuelle) | **Nik Collection de Google** (2016, gratuite) |
+|---|---|---|
+| Prix | Licence à vie payante ; essai gratuit de 30 jours | **Gratuite, pour toujours**, et légale : Google l'a rendue gratuite en 2016 |
+| Mises à jour | Oui | Non : figée en 2016, sans correctifs |
+| Applis | Silver Efex, Color Efex, Analog Efex, Viveza, HDR Efex, Dfine, Sharpener (versions récentes, masques IA…) | Silver Efex Pro 2, Color Efex Pro 4, Analog Efex Pro 2, Viveza 2, HDR Efex Pro 2, Dfine 2, Sharpener Pro 3 |
+| **Modifier dans** (3 modes) | ✅ | ✅ |
+| **Fusion HDR Efex** | ✅ | ✅ |
+| **Copier / Appliquer les paramètres** | ✅ | ❌ cette version ne garde pas ses réglages dans les fichiers |
+| **Reprendre une retouche** | ✅ | ❌ même raison |
+
+En pratique : avec la version gratuite, vous retouchez photo par photo dans Nik, comme le faisaient les utilisateurs
+de Lightroom avant 2017. Pour donner le même effet à toute une série, utilisez les **préréglages** à l'intérieur de
+l'appli Nik (Silver Efex Pro 2, Color Efex Pro 4… en ont des dizaines, et vous pouvez enregistrer les vôtres).
+
+### Obtenir la version DxO
+
+Sur [dxo.com](https://www.dxo.com/fr/nik-collection/download/) : remplissez le formulaire d'essai, téléchargez
+l'installeur et gardez la clé d'activation reçue par e-mail. Achetez une licence pour continuer après 30 jours.
+
+> **Fenêtre d'essai de DxO** : pour continuer l'essai, cliquez sur le **bouton** de la fenêtre (« Continuer l'essai »),
+> pas sur la croix : la croix ferme l'appli.
+
+### Obtenir la version gratuite de Google (2016)
+
+DxO ne la propose plus sur son site, mais **le lien officiel de Google fonctionne toujours** (vérifié le 18/10/2026) :
+
+```
+https://dl.google.com/edgedl/photos/nikcollection-full-1.2.11.exe
+```
+
+1. Téléchargez ce fichier (430 Mo) depuis ce lien, et **pas depuis un autre site** : les copies qui circulent ailleurs
+   peuvent avoir été modifiées.
+2. Vérifiez-le (facultatif mais recommandé) : clic droit ▸ *Propriétés* ▸ onglet *Signatures numériques* : le
+   signataire doit être **Google Inc**. Pour les plus prudents, dans PowerShell :
+   ```powershell
+   Get-FileHash .\nikcollection-full-1.2.11.exe   # doit donner 8B81B05531A4110F90025D99002E3A59078B39AB4C06747BB7E4E7BE5D94FB6D
+   ```
+   C'est le même fichier que celui archivé par la Wayback Machine depuis mars 2016.
+3. Lancez-le et suivez l'installation (dossier proposé : `C:\Program Files\Google\Nik Collection`).
+   Pour une installation sans questions : `nikcollection-full-1.2.11.exe /S` (en administrateur).
+
+La version 2016 fonctionne sous Windows 11 en appli autonome. Elle date d'avant les écrans haute définition : son
+interface peut paraître petite ou un peu floue.
 
 ## 4. Installation pas à pas
 
@@ -191,7 +242,12 @@ Un autre éditeur est réglé dans *Settings ▸ External Editing ▸ Other edit
 palette : elle le règle. Ou tapez-y le chemin complet de `NikPourLightCraft.exe`.
 
 **« Aucune appli de la Nik Collection n'a été trouvée ».**
-La Nik Collection doit être installée dans `C:\Program Files\DxO\…` (emplacement par défaut).
+La Nik Collection doit être installée à l'emplacement par défaut : `C:\Program Files\DxO\…` pour celle de DxO,
+`C:\Program Files\Google\Nik Collection` pour la version gratuite de 2016.
+
+**Les boutons Copier / Appliquer / Reprendre sont grisés.**
+Vous n'avez que la version gratuite de 2016 : ces trois fonctions demandent la Nik Collection de DxO
+(voir [3 bis](#3-bis-quelle-nik-collection-choisir-)). *Modifier dans* et *HDR Efex* fonctionnent.
 
 **« … photos sélectionnées : Modifier dans en ouvre 50 au plus à la fois ».**
 Vous avez sélectionné trop de photos (par exemple toute une séance avec Ctrl+A). Chaque photo ouvrirait sa propre
@@ -343,6 +399,24 @@ Fichier de configuration HDR (structure lue dans `HDRRunApp.lua`) :
 Le fichier de résultats contient des lignes `clé=valeur` (motif `(%w+)=(.*)` dans le module). Les clés `reimport`,
 `stack`, `filename` et `result` y sont lues.
 
+### Édition gratuite de Google (1.2.11, 2016)
+
+Installée dans `C:\Program Files\Google\Nik Collection\<Appli>\<Appli> (64-Bit)\<Appli>.exe` (chemins dans
+`GOOGLE_APPS`), signée **Google Inc**, juillet 2015 pour Color Efex Pro 4 (4.3.24). Les deux éditions coexistent :
+`find_apps()` renvoie les clés DxO (`silver`…) et Google (`silver2016`…), chacune avec `edition` (`dxo` / `google`) et
+`family` (clé commune). `app_for("silver")` prend DxO s'il est là, sinon la version 2016.
+
+| Usage | Commande | Source | Confiance |
+|---|---|---|---|
+| Ouvrir un fichier | `"<Appli>.exe" <fichier>` | Mécanisme « Modifier dans » de Lightroom | élevée |
+| HDR | `"HDR Efex Pro 2.exe" --config-file <config.xml>` | Chaînes de l'exe : `--config-file`, `general`, `input-images`, `output-path`, `run-results-file`, `saveAllAndQuit: _reimport, _stackImages, _writeLightroomResults` | moyenne (même XML que DxO) |
+| Appliquer des réglages | **impossible** | Testé le 18/10/2026 : `--script-file` existe, mais `LOADIMAGE` et `APPLYFILTER` sont inconnus (« Scripting command 'LOADIMAGE' not found » dans `%LOCALAPPDATA%\Google\<Appli>\<Appli>_log.txt`), puis l'appli plante | vérifié |
+
+Les préréglages de cette édition sont des XML lisibles (`.np`, racine `<ColorEfexPro4_preset>` / `<filter>` /
+`<parameter>`) dans `C:\ProgramData\Google\<Appli>\resource\styles` (ou `presets`). Ils ne sont pas exploités : sans
+commande pour les appliquer hors de l'interface, *Copier/Appliquer* et *Reprendre* sont réservés à l'édition DxO
+(`dxo_app()`, message `DXO_ONLY`, boutons grisés dans la palette).
+
 Identification de l'appli dans un fichier de paramètres (`plugin_from_params`) : clés `PluginName` / `pluginName` /
 `Info.Engine`, ou balise de l'ancien format `<SilverEfexPro2_filter>`. Les suffixes de sortie (`-sep`, `-cep`, `-aep`,
 `-vvz`, `-hdr`, `-df`, `-sh`, `-psh`) sont ceux de `PluginParamInit.lua`.
@@ -435,8 +509,10 @@ powershell -ExecutionPolicy Bypass -File .\tests\run-tests.ps1 [-Keep]
 2. génère trois JPEG de test (dégradés, `System.Drawing`) ;
 3. démarre un **LightCraft isolé** : `LIGHTCRAFT_CONFIG_DIR` et `--library` dans un dossier temporaire, port 7981. Votre
    bibliothèque et vos réglages ne sont pas touchés ;
-4. lance `test_e2e.py` (19 vérifications : réglage de l'éditeur, les trois modes, empilements, copie sans réglages,
-   HDR, détection d'appli, Copier/Appliquer, arguments reçus par le faux Nik, rechargements) et `test_menu.py` (le vrai
+4. lance `test_e2e.py` (28 vérifications : réglage de l'éditeur, limite de 50 photos, les trois modes, empilements,
+   copie sans réglages, HDR, détection d'appli, Copier/Appliquer, puis l'édition 2016 seule : détection, Modifier dans,
+   HDR par `--config-file`, refus expliqués de Copier/Appliquer/Reprendre ; arguments reçus par le faux Nik,
+   rechargements) et `test_menu.py` (le vrai
    chemin du menu : `photo.editInExternal` sans `app` → `NikPourLightCraft.exe` → sélecteur) ;
 5. arrête LightCraft et efface le dossier (sauf `-Keep`). Code de sortie non nul en cas d'échec.
 
@@ -453,6 +529,9 @@ deux images, et une fenêtre qui ne se redessine plus pendant 5 s fait refuser l
 | HDR Efex : `output-path` attend-il un dossier ou un fichier ? quelles clés exactes dans le fichier de résultats ? | ⏳ à valider (repli : nouveau fichier dans le dossier) |
 | Copier/Appliquer : `--params` accepte-t-il tel quel le fichier de `nondestructive_util` ? Le module de DxO semble le retravailler (décodage base64, ajout de `<ImageSize>`) pour certains formats | ⏳ à valider : point le plus incertain |
 | Nik Collection 6 à 8 | ⏳ non testé (noms d'exécutables détectés par motif `Nik * <Appli>.exe`) |
+| Édition Google 2016 : installation, signatures, détection des 8 applis | ✅ vérifié sur Windows 11 |
+| Édition Google 2016 : application de réglages par script | ✅ vérifié **impossible** (commandes absentes) → fonction réservée à DxO |
+| Édition Google 2016 : ouverture d'une photo, enregistrement, HDR par `--config-file` | ⏳ à valider sur les vraies applis |
 
 Vos retours sur ces points sont les bienvenus : ouvrez une *issue* avec le journal `lcnik.log`.
 

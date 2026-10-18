@@ -18,7 +18,8 @@ static class FakeNik
             File.Copy(input, output, true);
             return 0;
         }
-        int host = Array.IndexOf(a, "--host-lightroom");
+        // HDR : --host-lightroom (DxO) ou --config-file (Google 2016), même fichier de configuration
+        int host = Math.Max(Array.IndexOf(a, "--host-lightroom"), Array.IndexOf(a, "--config-file"));
         if (host >= 0)
         {
             XDocument x = XDocument.Load(a[host + 1]);
@@ -28,6 +29,8 @@ static class FakeNik
             string results = (string)keys.First(k => (string)k.Attribute("name") == "run-results-file").Attribute("value");
             string made = Path.Combine(outDir, Path.GetFileNameWithoutExtension(first) + "-HDR.tif");
             File.Copy(first, made, true);
+            // un contenu différent de l'entrée, sinon LightCraft refuse le résultat comme doublon
+            using (var s = new FileStream(made, FileMode.Append)) s.Write(Guid.NewGuid().ToByteArray(), 0, 16);
             File.WriteAllText(results, "result=ok\nfilename=" + made + "\nreimport=true\nstack=true\n");
             return 0;
         }

@@ -12,8 +12,12 @@ if ($LASTEXITCODE -ne 0) { throw "Python est installé sans tkinter : réinstall
 if (-not (Get-ChildItem 'C:\Program Files\LightCraft\lightcraft-cli.exe' -ErrorAction SilentlyContinue)) {
   Write-Warning "LightCraft n'est pas dans C:\Program Files\LightCraft : installez-le depuis github.com/storytold/lightcraft/releases."
 }
-if (-not (Get-ChildItem 'C:\Program Files\DxO\Nik Collection*\bin\Nik *.exe' -ErrorAction SilentlyContinue)) {
-  Write-Warning "Aucune Nik Collection trouvée dans C:\Program Files\DxO : installez-la (essai ou licence sur dxo.com)."
+$dxo = Get-ChildItem 'C:\Program Files\DxO\Nik Collection*\bin\Nik *.exe' -ErrorAction SilentlyContinue
+$google = Test-Path 'C:\Program Files\Google\Nik Collection\Silver Efex Pro 2'
+if (-not $dxo -and -not $google) {
+  Write-Warning "Aucune Nik Collection trouvée : installez celle de DxO (essai ou licence sur dxo.com) ou la version gratuite de Google (2016), voir README § 3 bis."
+} elseif (-not $dxo) {
+  "Nik Collection gratuite de Google (2016) trouvée : Modifier dans et HDR Efex disponibles ; Copier/Appliquer et Reprendre demandent celle de DxO."
 }
 
 # 1. Lanceur NikPourLightCraft.exe (compilateur C# de .NET Framework, fourni avec Windows)

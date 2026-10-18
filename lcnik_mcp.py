@@ -15,7 +15,9 @@ MODE = {"type": "string", "enum": list(core.MODES),
         "description": "adjusted = copie TIFF 16 bits ProPhoto avec les réglages LightCraft (défaut) ; copy = copie du "
                        "fichier original sans les réglages ; original = le fichier lui-même (TIFF/JPEG seulement ; un raw "
                        "passe toujours en copie TIFF)"}
-APP = {"type": "string", "description": "Appli Nik : silver, color, analog, viveza, hdr, dfine, sharpener, presharpener"}
+APP = {"type": "string", "description": "Appli Nik : silver, color, analog, viveza, hdr, dfine, sharpener, presharpener "
+                                         "(édition DxO si installée, sinon la version gratuite de 2016) ; suffixe 2016 "
+                                         "(silver2016…) pour forcer la version gratuite de Google"}
 
 TOOLS = [
     {"name": "nik_status", "title": "État Nik + LightCraft",
@@ -63,7 +65,8 @@ TOOLS = [
 BY_NAME = {t["name"]: t for t in TOOLS}
 INSTRUCTIONS = (
     "Nik Collection (Silver Efex, Color Efex, Analog Efex, Viveza, HDR Efex, Dfine, Sharpener) branchée sur l'application "
-    "LightCraft ouverte, comme dans Lightroom. LightCraft doit tourner avec son canal de contrôle (port 7980). Les "
+    "LightCraft ouverte, comme dans Lightroom. Deux éditions : DxO (6 ou plus récente) pour tout, ou la version gratuite "
+    "de Google (2016) pour nik_edit et nik_hdr seulement (nik_status dit lesquelles sont installées). LightCraft doit tourner avec son canal de contrôle (port 7980). Les "
     "retouches dans Nik sont faites par l'utilisateur ; ces outils ouvrent, fusionnent, copient/appliquent et réimportent."
 )
 

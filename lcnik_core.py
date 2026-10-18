@@ -44,6 +44,23 @@ APPS = [
     ("sharpener", "Sharpener Output", "-sh", ("outputsharpen", "sharpener output", "shpos")),
     ("presharpener", "Presharpener", "-psh", ("presharpen", "rawpresharpening", "shprps")),
 ]
+# Nik Collection gratuite de Google (1.2.11, 2016), installée à côté : chemin de l'exe 64 bits et nom de chaque appli.
+# Elle ouvre les photos et fusionne en HDR, mais n'a ni données non destructives ni commandes de script pour appliquer
+# des réglages (LOADIMAGE / APPLYFILTER absents, vérifié) : Copier/Appliquer et Reprendre demandent la version DxO.
+GOOGLE_DIR = r"C:\Program Files\Google\Nik Collection"
+GOOGLE_APPS = {
+    "silver": ("Silver Efex Pro 2", r"Silver Efex Pro 2\Silver Efex Pro 2 (64-Bit)\Silver Efex Pro 2.exe"),
+    "color": ("Color Efex Pro 4", r"Color Efex Pro 4\Color Efex Pro 4 (64-Bit)\Color Efex Pro 4.exe"),
+    "analog": ("Analog Efex Pro 2", r"Analog Efex Pro 2\Analog Efex Pro 2 (64-Bit)\Analog Efex Pro 2.exe"),
+    "viveza": ("Viveza 2", r"Viveza 2\Viveza 2 (64-Bit)\Viveza 2.exe"),
+    "hdr": ("HDR Efex Pro 2", r"HDR Efex Pro 2\HDR Efex Pro 2 (64-Bit)\HDR Efex Pro 2.exe"),
+    "dfine": ("Dfine 2", r"Dfine 2\Dfine 2 (64-Bit)\Dfine2.exe"),
+    "sharpener": ("Sharpener Pro 3 Output", r"Sharpener Pro 3\Sharpener Pro 3 (64-Bit)\SHP3OS.exe"),
+    "presharpener": ("Sharpener Pro 3 RAW Presharpener", r"Sharpener Pro 3\Sharpener Pro 3 (64-Bit)\SHP3RPS.exe"),
+}
+GOOGLE_SUFFIX = "2016"
+DXO_ONLY = ("« %s » demande la Nik Collection de DxO (version 6 ou plus récente, licence ou essai) : la version gratuite "
+            "de Google (2016) ne garde pas ses réglages dans les fichiers et ne sait pas les appliquer sans son interface.")
 RAW_EXT = {
     ".3fr", ".ari", ".arw", ".bay", ".braw", ".crw", ".cr2", ".cr3", ".cap", ".dcs", ".dcr", ".dng", ".drf", ".eip",
     ".erf", ".fff", ".gpr", ".iiq", ".k25", ".kdc", ".mdc", ".mef", ".mos", ".mrw", ".nef", ".nrw", ".obm", ".orf",
@@ -109,16 +126,38 @@ def nik_bin_dir():
 
 
 def find_apps():
-    """{clé: {"key", "name", "exe", "suffix"}} des applis Nik installées (la version la plus haute de chacune)."""
-    d = nik_bin_dir()
+    """{clé: {"key", "name", "exe", "suffix", "edition", "family"}} des applis Nik installées.
+
+    Édition DxO (la version la plus haute de chaque appli) : clés « silver », « color »… ; édition gratuite de Google
+    (2016) : clés « silver2016 »… Les deux peuvent coexister. `family` est la clé commune (« silver »)."""
     found = {}
-    if not d:
-        return found
+    d = nik_bin_dir()
     for key, name, suffix, _ in APPS:
-        exes = glob.glob(os.path.join(d, "Nik * " + name + ".exe"))
+        exes = glob.glob(os.path.join(d, "Nik * " + name + ".exe")) if d else []
         if exes:
-            found[key] = {"key": key, "name": name, "exe": sorted(exes)[-1], "suffix": suffix}
+            found[key] = {"key": key, "name": name, "exe": sorted(exes)[-1], "suffix": suffix, "edition": "dxo",
+                          "family": key}
+    for key, name, suffix, _ in APPS:
+        gname, rel = GOOGLE_APPS[key]
+        exe = os.path.join(GOOGLE_DIR, rel)
+        if os.path.isfile(exe):
+            found[key + GOOGLE_SUFFIX] = {"key": key + GOOGLE_SUFFIX, "name": gname + " (2016)", "exe": exe,
+                                          "suffix": suffix, "edition": "google", "family": key}
     return found
+
+
+def editions():
+    """Les éditions de Nik installées : sous-ensemble de ["dxo", "google"]."""
+    return sorted({a["edition"] for a in find_apps().values()})
+
+
+def hdr_app():
+    """HDR Efex de DxO s'il est là, sinon HDR Efex Pro 2 (2016)."""
+    apps = find_apps()
+    a = apps.get("hdr") or apps.get("hdr" + GOOGLE_SUFFIX)
+    if not a:
+        raise NikError("HDR Efex n'est pas installé (ni la version DxO, ni la version gratuite de 2016)")
+    return a
 
 
 def app_for(key_or_name):
@@ -126,6 +165,10 @@ def app_for(key_or_name):
     k = (key_or_name or "").strip().lower()
     for a in apps.values():
         if k in (a["key"], a["name"].lower()) or k == os.path.basename(a["exe"]).lower():
+            return a
+    # une famille seule (« silver ») quand seule la version 2016 est installée
+    for a in apps.values():
+        if k == a["family"]:
             return a
     raise NikError("appli Nik inconnue ou absente : %r (disponibles : %s)" % (key_or_name, ", ".join(apps) or "aucune"))
 
@@ -346,7 +389,7 @@ def watch(spec):
 
 def status(port=None):
     apps = find_apps()
-    out = {"nik_bin": nik_bin_dir(), "apps": list(apps.values()), "launcher": LAUNCHER_EXE,
+    out = {"nik_bin": nik_bin_dir(), "editions": editions(), "apps": list(apps.values()), "launcher": LAUNCHER_EXE,
            "launcher_present": os.path.isfile(LAUNCHER_EXE), "saved_params": saved_params()}
     lc = LightCraft(port)
     try:
@@ -414,7 +457,7 @@ def edit(app, mode="adjusted", ids=None, port=None):
 
 def hdr(ids=None, mode="adjusted", port=None, wait=True):
     """Fichier ▸ Exporter avec un préréglage ▸ Nik HDR Efex : fusionne les photos et ajoute le résultat empilé."""
-    a = app_for("hdr")
+    a = hdr_app()
     lc = LightCraft(port)
     try:
         targets = lc.targets(ids)
@@ -440,7 +483,8 @@ def hdr(ids=None, mode="adjusted", port=None, wait=True):
         log("HDR : %d images, config %s" % (len(inputs), cfg))
         before = set(glob.glob(os.path.join(out_dir, "*")))
         t0 = time.time()
-        proc = launch(a["exe"], "--host-lightroom", cfg)
+        # même fichier de configuration pour les deux éditions ; seule l'option change (lue dans chaque exécutable)
+        proc = launch(a["exe"], "--host-lightroom" if a["edition"] == "dxo" else "--config-file", cfg)
         if not wait:
             return {"app": a["name"], "started": True, "config": cfg, "inputs": inputs}
         proc.wait()
@@ -474,7 +518,17 @@ def hdr(ids=None, mode="adjusted", port=None, wait=True):
         lc.close()
 
 
+def dxo_app(feature, key):
+    """L'appli DxO `key`, pour une fonction réservée à l'édition DxO ; sinon une erreur qui explique pourquoi."""
+    a = find_apps().get(key)
+    if not a:
+        raise NikError(DXO_ONLY % feature if "dxo" not in editions() else "%s de DxO n'est pas installé" % key)
+    return a
+
+
 def extract_params(tiff):
+    if "dxo" not in editions():
+        raise NikError(DXO_ONLY % "Lire les réglages Nik d'une photo")
     util = os.path.join(nik_bin_dir() or "", "nondestructive_util.exe")
     if not os.path.isfile(util):
         raise NikError("nondestructive_util.exe introuvable dans la Nik Collection")
@@ -533,6 +587,8 @@ def saved_params():
 
 def apply_params(ids=None, plugin=None, show_ui=False, mode="adjusted", port=None):
     """Appliquer les paramètres copiés aux photos sélectionnées ; chaque résultat est empilé sur sa photo."""
+    if "dxo" not in editions():
+        raise NikError(DXO_ONLY % "Appliquer les paramètres")
     saved = saved_params()
     if not saved:
         raise NikError("aucun paramètre copié : utilisez d'abord Copier les paramètres")
@@ -542,7 +598,7 @@ def apply_params(ids=None, plugin=None, show_ui=False, mode="adjusted", port=Non
             raise NikError("aucun paramètre copié pour %s" % plugin)
     else:
         entry = max(saved, key=lambda s: s.get("copied") or "")
-    a = app_for(entry["plugin"])
+    a = dxo_app("Appliquer les paramètres", entry["plugin"])
     lc = LightCraft(port)
     results, errors = [], []
     try:
@@ -589,7 +645,7 @@ def reedit(pid=None, port=None):
     key = plugin_from_params(text)
     if not key:
         raise NikError("impossible de savoir quelle appli Nik a produit %s" % os.path.basename(src))
-    a = app_for(key)
+    a = dxo_app("Reprendre la retouche Nik", key)
     launch(a["exe"], src)
     start_watch(a["exe"], [[pid, src]], port)
     return {"app": a["name"], "photo": pid, "path": src}
